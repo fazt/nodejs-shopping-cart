@@ -1,23 +1,25 @@
-var path = require('path');
+const path = require('path');
 
-var express = require('express');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var exphbs= require('express-handlebars');
-var mongoose = require('mongoose');
-var session = require('express-session');
-var passport = require('passport');
-var flash = require('connect-flash');
-var validator = require('express-validator');
-var MongoStore = require('connect-mongo')(session);
+const express = require('express');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const exphbs= require('express-handlebars');
+const mongoose = require('mongoose');
+const session = require('express-session');
+const passport = require('passport');
+const flash = require('connect-flash');
+const validator = require('express-validator');
+const MongoStore = require('connect-mongo')(session);
 
-var routes = require('./routes/index');
-var userRoutes = require('./routes/user');
-var app = express();
+const routes = require('./routes/index');
+const userRoutes = require('./routes/user');
+const app = express();
 
-mongoose.connect('localhost:27017/shopping');
+mongoose.connect('mongodb://localhost:27017/shopping')
+  .then(db => console.log('db connected'))
+  .catch(err => console.log(err));
 require('./config/passport');
 
 // view engine setup
@@ -48,6 +50,7 @@ app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function(req,res,next) {
+  res.locals.appName = 'Node Simple Store';
   res.locals.login = req.isAuthenticated();
   res.locals.session = req.session;
   next();
